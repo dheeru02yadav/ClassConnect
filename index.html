@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -462,25 +463,10 @@
       margin-top: 6px;
     }
 
-    .shared-image {
-      display: block;
-      max-width: 260px;
-      width: 100%;
-      border-radius: 12px;
-      margin-top: 8px;
-    }
-
     .composer {
       border-top: 1px solid var(--border);
       padding: 15px;
       background: #15151c;
-    }
-
-    .selected-file {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 8px;
-      overflow-wrap: anywhere;
     }
 
     .composer-row {
@@ -512,15 +498,6 @@
       background: var(--accent);
       color: white;
       font-weight: bold;
-    }
-
-    .file-button {
-      border: 1px solid var(--border);
-      background: var(--panel-light);
-      color: white;
-      border-radius: 15px;
-      padding: 12px 13px;
-      cursor: pointer;
     }
 
     .mobile-section {
@@ -856,20 +833,7 @@
         </section>
 
         <section class="composer">
-          <div id="selectedFileText" class="selected-file"></div>
-
           <div class="composer-row">
-            <label class="file-button" for="imageInput" title="Attach an image">
-              📷
-            </label>
-
-            <input
-              id="imageInput"
-              type="file"
-              accept="image/*"
-              class="hidden"
-            />
-
             <textarea
               id="messageInput"
               rows="1"
@@ -947,13 +911,6 @@
     } from
       "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    import {
-      getStorage,
-      ref,
-      uploadBytes,
-      getDownloadURL
-    } from
-      "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 
     /*
       ============================================================
@@ -964,7 +921,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
     /*
       ============================================================
@@ -975,7 +931,6 @@
     let selectedSectionCode = "";
     let currentDisplayName = "";
     let unsubscribeMessages = null;
-    let selectedImageFile = null;
 
     const sectionNames = {
       "26bcaca": "Section A",
@@ -1029,8 +984,6 @@
     const conversationCode = document.getElementById("conversationCode");
     const messagesContainer = document.getElementById("messagesContainer");
 
-    const imageInput = document.getElementById("imageInput");
-    const selectedFileText = document.getElementById("selectedFileText");
     const messageInput = document.getElementById("messageInput");
     const sendButton = document.getElementById("sendButton");
     const clearLocalNoticeButton = document.getElementById("clearLocalNoticeButton");
@@ -1562,15 +1515,6 @@
         bubble.appendChild(text);
       }
 
-      if (message.imageUrl) {
-        const image = document.createElement("img");
-        image.className = "shared-image";
-        image.src = message.imageUrl;
-        image.alt = "Shared image";
-        image.loading = "lazy";
-        bubble.appendChild(image);
-      }
-
       const time = document.createElement("div");
       time.className = "message-time";
       time.textContent = formatMessageTime(message.createdAt);
@@ -1583,49 +1527,7 @@
 
     /*
       ============================================================
-      Image selection
-      ============================================================
-    */
-
-    imageInput.addEventListener("change", () => {
-      selectedImageFile = imageInput.files[0] || null;
-
-      if (!selectedImageFile) {
-        selectedFileText.textContent = "";
-        return;
-      }
-
-      if (!selectedImageFile.type.startsWith("image/")) {
-        selectedImageFile = null;
-        imageInput.value = "";
-
-        showTemporaryComposerMessage(
-          "Please select an image file."
-        );
-        return;
-      }
-
-      if (selectedImageFile.size > 5 * 1024 * 1024) {
-        selectedImageFile = null;
-        imageInput.value = "";
-
-        showTemporaryComposerMessage(
-          "The image must be smaller than 5 MB."
-        );
-        return;
-      }
-
-      selectedFileText.textContent =
-        `Selected image: ${selectedImageFile.name}`;
-    });
-
-    function showTemporaryComposerMessage(text) {
-      selectedFileText.textContent = text;
-    }
-
-    /*
-      ============================================================
-      Send messages and upload images
+      Send text messages
       ============================================================
     */
 
@@ -1653,21 +1555,6 @@
       sendButton.disabled = true;
 
       try {
-        let imageUrl = "";
-
-        if (selectedImageFile) {
-          const fileName =
-            `${Date.now()}-${selectedImageFile.name}`;
-
-          const imageReference = ref(
-            storage,
-            `chatImages/${auth.currentUser.uid}/${fileName}`
-          );
-
-          await uploadBytes(imageReference, selectedImageFile);
-          imageUrl = await getDownloadURL(imageReference);
-        }
-
         await addDoc(
           collection(
             db,
@@ -1679,16 +1566,12 @@
             authorUid: auth.currentUser.uid,
             authorName: currentDisplayName || "Anonymous",
             text: text,
-            imageUrl: imageUrl,
             section: selectedSectionCode,
             createdAt: serverTimestamp()
           }
         );
 
         messageInput.value = "";
-        imageInput.value = "";
-        selectedImageFile = null;
-        selectedFileText.textContent = "";
       } catch (error) {
         console.error(error);
 
@@ -1792,11 +1675,7 @@
         "auth/network-request-failed":
           "Network error. Check your internet connection.",
         "auth/operation-not-allowed":
-          "Email/password login is not enabled in Firebase Authentication.",
-        "storage/unauthorized":
-          "Firebase Storage rejected this image upload. Check Storage rules.",
-        "storage/unknown":
-          "The image upload failed. Please try again."
+          "Email/password login is not enabled in Firebase Authentication."
       };
 
       return messages[code] ||
