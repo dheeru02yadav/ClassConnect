@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -579,6 +580,18 @@
         padding: 8px;
       }
     }
+  
+    /* Liquid-glass theme and message tools */
+    body { background: radial-gradient(circle at top left, #182848, #0f172a 45%, #111827); color: #eef2ff; }
+    .glass, .screen, .app-shell, .composer, .bubble, .class-button, .auth-card, .name-card { backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); background: rgba(30, 41, 59, .52) !important; border: 1px solid rgba(148, 163, 184, .24) !important; box-shadow: 0 12px 40px rgba(0,0,0,.22); }
+    .composer-row { display:flex; align-items:center; gap:10px; }
+    .composer-tools { display:flex; gap:6px; }
+    .tool-button, .delete-message, .emoji-picker button { border:1px solid rgba(167,139,250,.35); background:rgba(139,92,246,.18); color:inherit; border-radius:12px; padding:9px 11px; cursor:pointer; }
+    .tool-button:hover, .delete-message:hover, .emoji-picker button:hover { background:rgba(167,139,250,.35); }
+    .emoji-picker { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; padding:10px; border-radius:16px; background:rgba(15,23,42,.7); border:1px solid rgba(148,163,184,.25); backdrop-filter:blur(16px); }
+    .message-gif { display:block; max-width:240px; max-height:240px; border-radius:14px; margin-top:8px; }
+    .delete-message { font-size:12px; margin-top:8px; padding:5px 9px; }
+
   </style>
 </head>
 
@@ -620,13 +633,13 @@
         <label for="sectionSelect">Class section</label>
         <select id="sectionSelect">
           <option value="">Select a section</option>
-          <option value="26bcaca">Section A — 26bcaca</option>
-          <option value="26bcacb">Section B — 26bcacb</option>
-          <option value="26bcacc">Section C — 26bcacc</option>
-          <option value="26bcacd">Section D — 26bcacd</option>
-          <option value="26bcace">Section E — 26bcace</option>
-          <option value="26bcacf">Section F — 26bcacf</option>
-          <option value="26bcacg">Section G — 26bcacg</option>
+          <option value="26bcaca">Section A</option>
+          <option value="26bcacb">Section B</option>
+          <option value="26bcacc">Section C</option>
+          <option value="26bcacd">Section D</option>
+          <option value="26bcace">Section E</option>
+          <option value="26bcacf">Section F</option>
+          <option value="26bcacg">Section G</option>
         </select>
       </div>
 
@@ -650,11 +663,11 @@
       <div class="prototype-box">
         Your email must follow this format:
         <br /><br />
-        <strong>26bca + section letter + roll number + @kristujayanti.com</strong>
+        <strong>Use any valid email address</strong>
         <br /><br />
         Example for Section A:
         <br />
-        <strong>26bcaa23@kristujayanti.com</strong>
+        <strong>example@email.com</strong>
       </div>
 
       <div class="field">
@@ -756,37 +769,37 @@
         <div id="classList" class="class-list">
           <button class="class-button active" data-section="26bcaca">
             <strong>Section A</strong>
-            <span>26bcaca</span>
+            <span>Section A</span>
           </button>
 
           <button class="class-button" data-section="26bcacb">
             <strong>Section B</strong>
-            <span>26bcacb</span>
+            <span>Section B</span>
           </button>
 
           <button class="class-button" data-section="26bcacc">
             <strong>Section C</strong>
-            <span>26bcacc</span>
+            <span>Section C</span>
           </button>
 
           <button class="class-button" data-section="26bcacd">
             <strong>Section D</strong>
-            <span>26bcacd</span>
+            <span>Section D</span>
           </button>
 
           <button class="class-button" data-section="26bcace">
             <strong>Section E</strong>
-            <span>26bcace</span>
+            <span>Section E</span>
           </button>
 
           <button class="class-button" data-section="26bcacf">
             <strong>Section F</strong>
-            <span>26bcacf</span>
+            <span>Section F</span>
           </button>
 
           <button class="class-button" data-section="26bcacg">
             <strong>Section G</strong>
-            <span>26bcacg</span>
+            <span>Section G</span>
           </button>
         </div>
 
@@ -815,7 +828,7 @@
             <div id="conversationAvatar" class="avatar">A</div>
             <div>
               <h2 id="conversationName">Section A</h2>
-              <p id="conversationCode">26bcaca</p>
+              <p id="conversationCode">Private class room</p>
             </div>
           </div>
 
@@ -834,16 +847,23 @@
 
         <section class="composer">
           <div class="composer-row">
+            <div class="composer-tools">
+              <button type="button" id="emojiButton" class="tool-button" title="Add emoji">😊</button>
+              <button type="button" id="gifButton" class="tool-button" title="Send a GIF">GIF</button>
+            </div>
             <textarea
               id="messageInput"
               rows="1"
               maxlength="2000"
               placeholder="Write a message..."
             ></textarea>
-
-            <button id="sendButton" class="send-button">
-              Send
-            </button>
+            <button id="sendButton" class="send-button">Send</button>
+          </div>
+          <div id="emojiPicker" class="emoji-picker" hidden>
+            <button type="button">😀</button><button type="button">😂</button><button type="button">😍</button>
+            <button type="button">🥳</button><button type="button">🔥</button><button type="button">❤️</button>
+            <button type="button">👍</button><button type="button">👏</button><button type="button">😭</button>
+            <button type="button">😎</button><button type="button">🎉</button><button type="button">💯</button>
           </div>
         </section>
       </main>
@@ -907,7 +927,9 @@
       orderBy,
       onSnapshot,
       serverTimestamp,
-      limit
+      limit,
+      deleteDoc,
+      doc
     } from
       "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
@@ -1068,7 +1090,7 @@
         return false;
       }
 
-      if (!/^26bca[a-g]\d+@kristujayanti\.com$/i.test(normalizedEmail)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
         return false;
       }
 
@@ -1463,7 +1485,7 @@
 
           snapshot.forEach((messageDocument) => {
             const message = messageDocument.data();
-            renderMessage(message);
+            renderMessage({ ...message, id: messageDocument.id });
           });
 
           messagesContainer.scrollTop =
@@ -1515,10 +1537,38 @@
         bubble.appendChild(text);
       }
 
+      if (message.gifUrl) {
+        const gif = document.createElement("img");
+        gif.className = "message-gif";
+        gif.src = message.gifUrl;
+        gif.alt = "GIF";
+        gif.loading = "lazy";
+        gif.referrerPolicy = "no-referrer";
+        gif.onerror = () => { gif.replaceWith(document.createTextNode("GIF could not be loaded.")); };
+        bubble.appendChild(gif);
+      }
+
       const time = document.createElement("div");
       time.className = "message-time";
       time.textContent = formatMessageTime(message.createdAt);
       bubble.appendChild(time);
+
+      if (isMine && message.id) {
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-message";
+        deleteButton.type = "button";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", async () => {
+          if (!confirm("Delete this message?")) return;
+          try {
+            await deleteDoc(doc(db, "rooms", selectedSectionCode, "messages", message.id));
+          } catch (error) {
+            console.error(error);
+            showTemporaryComposerMessage(getFirebaseErrorMessage(error));
+          }
+        });
+        bubble.appendChild(deleteButton);
+      }
 
       row.appendChild(miniAvatar);
       row.appendChild(bubble);
@@ -1530,6 +1580,47 @@
       Send text messages
       ============================================================
     */
+
+    const emojiButton = document.getElementById("emojiButton");
+    const emojiPicker = document.getElementById("emojiPicker");
+    const gifButton = document.getElementById("gifButton");
+
+    emojiButton.addEventListener("click", () => {
+      emojiPicker.hidden = !emojiPicker.hidden;
+    });
+
+    emojiPicker.querySelectorAll("button").forEach((button) => {
+      button.addEventListener("click", () => {
+        messageInput.value += button.textContent;
+        messageInput.focus();
+      });
+    });
+
+    gifButton.addEventListener("click", async () => {
+      const gifUrl = prompt("Paste a direct GIF URL ending in .gif:");
+      if (!gifUrl) return;
+      if (!/^https?:\/\/.+\.gif(?:\?.*)?$/i.test(gifUrl.trim())) {
+        showTemporaryComposerMessage("Please enter a direct .gif URL.");
+        return;
+      }
+      if (!auth.currentUser) {
+        showTemporaryComposerMessage("Please log in again.");
+        return;
+      }
+      try {
+        await addDoc(collection(db, "rooms", selectedSectionCode, "messages"), {
+          authorUid: auth.currentUser.uid,
+          authorName: currentDisplayName || "Anonymous",
+          text: "",
+          gifUrl: gifUrl.trim(),
+          section: selectedSectionCode,
+          createdAt: serverTimestamp()
+        });
+      } catch (error) {
+        console.error(error);
+        showTemporaryComposerMessage(getFirebaseErrorMessage(error));
+      }
+    });
 
     sendButton.addEventListener("click", sendMessage);
 
@@ -1543,7 +1634,7 @@
     async function sendMessage() {
       const text = messageInput.value.trim();
 
-      if (!text && !selectedImageFile) {
+      if (!text) {
         return;
       }
 
