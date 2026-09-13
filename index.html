@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ClassConnect</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(16, 29, 52, 0.92);
+      --panel-light: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.16);
+      --text: #f5f7ff;
+      --muted: #aab6ce;
+      --primary: #8ff5d2;
+      --primary-dark: #102d2a;
+      --danger: #ff8585;
+      --message: #1c3154;
+      --my-message: #14554d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #19335b 0, transparent 38%),
+        radial-gradient(circle at bottom right, #173d3b 0, transparent 35%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .app {
+      width: min(100%, 900px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .brand {
+      margin: 12px 0 22px;
+      text-align: center;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      letter-spacing: -1px;
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .screen {
+      width: 100%;
+      padding: clamp(20px, 5vw, 38px);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      background: var(--panel);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(14px);
+    }
+
+    .screen h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+    }
+
+    .screen-description {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .field-label {
+      display: block;
+      margin: 15px 0 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 13px 14px;
+      outline: none;
+      color: var(--text);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(143, 245, 210, 0.13);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 13px 18px;
+      border: 0;
+      border-radius: 13px;
+      color: var(--primary-dark);
+      background: var(--primary);
+      font-weight: 800;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .button:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      color: var(--text);
+      background: var(--panel-light);
+      border: 1px solid var(--border);
+    }
+
+    .button.danger {
+      color: #fff;
+      background: #a83e50;
+    }
+
+    .button:focus-visible,
+    .icon-button:focus-visible,
+    .prototype-close:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 3px;
+    }
+
+    .code-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .code-option {
+      padding: 17px 10px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      text-align: center;
+      transition: 0.2s ease;
+    }
+
+    .code-option:hover,
+    .code-option.selected {
+      border-color: var(--primary);
+      background: rgba(143, 245, 210, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .code-option strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 1.05rem;
+    }
+
+    .code-option span {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .message {
+      min-height: 20px;
+      margin-top: 12px;
+      color: var(--danger);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .chat-layout {
+      display: flex;
+      min-height: 80vh;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(8, 18, 35, 0.92);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .chat-title {
+      min-width: 0;
+    }
+
+    .chat-title h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .chat-title p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 7px;
+    }
+
+    .icon-button {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 9px 11px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .icon-button:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .chat-messages {
+      display: flex;
+      flex: 1;
+      min-height: 300px;
+      max-height: 58vh;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+      padding: 18px;
+    }
+
+    .empty-chat {
+      margin: auto;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .chat-message {
+      align-self: flex-start;
+      max-width: min(82%, 560px);
+      padding: 11px 13px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px 16px 16px 4px;
+      background: var(--message);
+      overflow-wrap: anywhere;
+    }
+
+    .chat-message.mine {
+      align-self: flex-end;
+      border-radius: 16px 16px 4px 16px;
+      background: var(--my-message);
+    }
+
+    .message-author {
+      margin-bottom: 5px;
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .message-text {
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .message-time {
+      margin-top: 7px;
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.7rem;
+      text-align: right;
+    }
+
+    .message-image {
+      display: block;
+      width: 100%;
+      max-width: 280px;
+      margin-top: 8px;
+      border-radius: 12px;
+    }
+
+    .chat-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 16px 0;
+    }
+
+    .tool-button {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 9px 12px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .tool-button:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .sticker-panel,
+    .video-panel {
+      margin: 12px 16px 0;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .sticker-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sticker {
+      min-width: 44px;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 1.6rem;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .video-panel p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .video-placeholder {
+      display: grid;
+      min-height: 150px;
+      place-items: center;
+      border-radius: 13px;
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+
+    .chat-input-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 9px;
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .chat-input-area textarea {
+      min-height: 48px;
+      max-height: 140px;
+      resize: vertical;
+    }
+
+    .send-button {
+      flex: 0 0 auto;
+      min-height: 48px;
+      padding: 0 17px;
+      border: 0;
+      border-radius: 13px;
+      color: var(--primary-dark);
+      background: var(--primary);
+      font-weight: 800;
+    }
+
+    .privacy-note {
+      padding: 12px 17px;
+      color: var(--muted);
+      background: rgba(255, 193, 7, 0.08);
+      border-top: 1px solid rgba(255, 193, 7, 0.15);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .prototype-notice {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(5, 10, 25, 0.76);
+      backdrop-filter: blur(8px);
+    }
+
+    .prototype-notice-card {
+      position: relative;
+      width: min(420px, 100%);
+      padding: 28px 24px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 22px;
+      color: #ffffff;
+      text-align: center;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(36, 48, 92, 0.98),
+          rgba(15, 23, 52, 0.98)
+        );
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      animation: prototypePopupIn 0.3s ease-out;
+    }
+
+    .prototype-icon {
+      display: grid;
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 15px;
+      place-items: center;
+      border-radius: 18px;
+      font-size: 28px;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .prototype-notice-card h2 {
+      margin: 0 0 15px;
+      font-size: 1.35rem;
+      line-height: 1.3;
+    }
+
+    .prototype-notice-card p {
+      margin: 10px 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .prototype-notice-card strong {
+      color: #ffffff;
+    }
+
+    .prototype-thanks {
+      margin-top: 16px !important;
+      font-weight: 600;
+    }
+
+    .prototype-close {
+      position: absolute;
+      top: 10px;
+      right: 13px;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      color: rgba(255, 255, 255, 0.8);
+      background: transparent;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .prototype-close:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.13);
+    }
+
+    .prototype-continue {
+      width: 100%;
+      margin-top: 16px;
+      padding: 13px 18px;
+      border: 0;
+      border-radius: 13px;
+      color: #10152d;
+      background: #8ff5d2;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .prototype-continue:hover {
+      background: #b1ffe4;
+    }
+
+    @keyframes prototypePopupIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .app {
+        padding: 10px;
+      }
+
+      .screen {
+        padding: 22px 17px;
+        border-radius: 20px;
+      }
+
+      .chat-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .chat-messages {
+        max-height: 55vh;
+        padding: 12px;
+      }
+
+      .chat-message {
+        max-width: 92%;
+      }
+
+      .chat-input-area {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .send-button {
+        min-height: 44px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .prototype-notice-card {
+        animation: none;
+      }
+
+      .button,
+      .code-option {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Prototype Notice -->
+  <div
+    id="prototypeNotice"
+    class="prototype-notice"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="prototypeNoticeTitle"
+  >
+    <div class="prototype-notice-card">
+      <button
+        class="prototype-close"
+        id="closePrototypeNotice"
+        type="button"
+        aria-label="Close prototype notice"
+      >
+        &times;
+      </button>
+
+      <div class="prototype-icon">💬</div>
+
+      <h2 id="prototypeNoticeTitle">Welcome to ClassConnect!</h2>
+
+      <p>
+        This is a prototype created by
+        <strong>Dheeru Yadav</strong>, a student of
+        <strong>BCAC</strong>.
+      </p>
+
+      <p>
+        I built it to make communication easier for students,
+        especially in areas with
+        <strong>low internet connectivity</strong>.
+        ClassConnect is designed to work while using
+        <strong>low data</strong>.
+      </p>
+
+      <p class="prototype-thanks">
+        Thank you for trying it!
+      </p>
+
+      <button
+        id="continuePrototype"
+        class="prototype-continue"
+        type="button"
+      >
+        Continue to ClassConnect
+      </button>
+    </div>
+  </div>
+
+  <main class="app">
+    <header class="brand">
+      <h1>ClassConnect</h1>
+      <p>Simple communication for your class</p>
+    </header>
+
+    <!-- Class Code Screen -->
+    <section id="classCodeScreen" class="screen">
+      <h2>Choose your class section</h2>
+
+      <p class="screen-description">
+        Select the class code assigned to your section before continuing.
+      </p>
+
+      <div id="codeGrid" class="code-grid">
+        <button class="code-option" type="button" data-code="26bcaca">
+          <strong>Section A</strong>
+          <span>26bcaca</span>
+        </button>
+
+        <button class="code-option" type="button" data-code="26bcacb">
+          <strong>Section B</strong>
+          <span>26bcacb</span>
+        </button>
+
+        <button class="code-option" type="button" data-code="26bcacc">
+          <strong>Section C</strong>
+          <span>26bcacc</span>
+        </button>
+
+        <button class="code-option" type="button" data-code="26bcacd">
+          <strong>Section D</strong>
+          <span>26bcacd</span>
+        </button>
+
+        <button class="code-option" type="button" data-code="26bcace">
+          <strong>Section E</strong>
+          <span>26bcace</span>
+        </button>
+
+        <button class="code-option" type="button" data-code="26bcacf">
+          <strong>Section F</strong>
+          <span>26bcacf</span>
+        </button>
+
+        <button class="code-option" type="button" data-code="26bcacg">
+          <strong>Section G</strong>
+          <span>26bcacg</span>
+        </button>
+      </div>
+
+      <button id="continueCode" class="button" type="button" disabled>
+        Continue
+      </button>
+
+      <div id="codeMessage" class="message" aria-live="polite"></div>
+    </section>
+
+    <!-- Email Screen -->
+    <section id="emailScreen" class="screen hidden">
+      <h2>Verify your college email</h2>
+
+      <p class="screen-description">
+        Enter your Kristu Jayanti college email. Your email will not be
+        displayed in the chatroom.
+      </p>
+
+      <label class="field-label" for="collegeEmail">
+        College email
+      </label>
+
+      <input
+        id="collegeEmail"
+        type="email"
+        placeholder="26bcaa23@kristujayanti.com"
+        autocomplete="email"
+      />
+
+      <button id="verifyEmail" class="button" type="button">
+        Verify Email
+      </button>
+
+      <button id="backToCode" class="button secondary" type="button">
+        Back
+      </button>
+
+      <div id="emailMessage" class="message" aria-live="polite"></div>
+    </section>
+
+    <!-- Anonymous Name Screen -->
+    <section id="nameScreen" class="screen hidden">
+      <h2>Choose your anonymous name</h2>
+
+      <p class="screen-description">
+        Choose the name that other classmates will see in the chat.
+        Your college email will remain hidden.
+      </p>
+
+      <label class="field-label" for="anonymousName">
+        Anonymous name
+      </label>
+
+      <input
+        id="anonymousName"
+        type="text"
+        maxlength="30"
+        placeholder="For example: Blue Falcon"
+      />
+
+      <button id="enterChat" class="button" type="button">
+        Enter ClassConnect
+      </button>
+
+      <button id="backToEmail" class="button secondary" type="button">
+        Back
+      </button>
+
+      <div id="nameMessage" class="message" aria-live="polite"></div>
+    </section>
+
+    <!-- Chat Screen -->
+    <section id="chatScreen" class="chat-layout hidden">
+      <header class="chat-header">
+        <div class="chat-title">
+          <h2 id="chatRoomTitle">ClassConnect</h2>
+          <p id="chatRoomSubtitle">Your class chatroom</p>
+        </div>
+
+        <div class="header-actions">
+          <button id="showPrivacy" class="icon-button" type="button">
+            Privacy
+          </button>
+
+          <button id="leaveClass" class="icon-button" type="button">
+            Leave
+          </button>
+        </div>
+      </header>
+
+      <div id="chatMessages" class="chat-messages" aria-live="polite">
+        <div id="emptyChat" class="empty-chat">
+          No messages yet.<br />
+          Start the conversation with your classmates.
+        </div>
+      </div>
+
+      <div class="chat-tools">
+        <button id="toggleStickers" class="tool-button" type="button">
+          Stickers
+        </button>
+
+        <button id="photoButton" class="tool-button" type="button">
+          Photo
+        </button>
+
+        <button id="toggleVideo" class="tool-button" type="button">
+          Video call demo
+        </button>
+
+        <input
+          id="photoInput"
+          type="file"
+          accept="image/*"
+          class="hidden"
+        />
+      </div>
+
+      <div id="stickerPanel" class="sticker-panel hidden">
+        <div class="sticker-list">
+          <button class="sticker" type="button" data-sticker="😀">😀</button>
+          <button class="sticker" type="button" data-sticker="😂">😂</button>
+          <button class="sticker" type="button" data-sticker="❤️">❤️</button>
+          <button class="sticker" type="button" data-sticker="🔥">🔥</button>
+          <button class="sticker" type="button" data-sticker="👍">👍</button>
+          <button class="sticker" type="button" data-sticker="👏">👏</button>
+          <button class="sticker" type="button" data-sticker="🎉">🎉</button>
+          <button class="sticker" type="button" data-sticker="😎">😎</button>
+          <button class="sticker" type="button" data-sticker="🤝">🤝</button>
+          <button class="sticker" type="button" data-sticker="📚">📚</button>
+        </div>
+      </div>
+
+      <div id="videoPanel" class="video-panel hidden">
+        <p>
+          This is only a visual video-call demo. A real video call requires
+          WebRTC and a backend signaling service.
+        </p>
+
+        <div class="video-placeholder">
+          🎥<br />
+          Video call preview unavailable in offline demo mode
+        </div>
+      </div>
+
+      <form id="messageForm" class="chat-input-area">
+        <textarea
+          id="messageInput"
+          placeholder="Write a message..."
+          maxlength="2000"
+          aria-label="Write a message"
+        ></textarea>
+
+        <button class="send-button" type="submit">
+          Send
+        </button>
+      </form>
+
+      <div id="privacyNote" class="privacy-note hidden">
+        Privacy notice: this prototype hides your college email from the
+        visible chat. In this browser-only demo, messages and photos are
+        stored only in this browser. A real shared chat requires a secure
+        backend and authentication.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const prototypeNotice = document.getElementById("prototypeNotice");
+    const closePrototypeNotice = document.getElementById("closePrototypeNotice");
+    const continuePrototype = document.getElementById("continuePrototype");
+
+    function hidePrototypeNotice() {
+      prototypeNotice.classList.add("hidden");
+    }
+
+    closePrototypeNotice.addEventListener("click", hidePrototypeNotice);
+    continuePrototype.addEventListener("click", hidePrototypeNotice);
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        hidePrototypeNotice();
+      }
+    });
+
+    const classCodeScreen = document.getElementById("classCodeScreen");
+    const emailScreen = document.getElementById("emailScreen");
+    const nameScreen = document.getElementById("nameScreen");
+    const chatScreen = document.getElementById("chatScreen");
+
+    const codeOptions = document.querySelectorAll(".code-option");
+    const continueCode = document.getElementById("continueCode");
+    const codeMessage = document.getElementById("codeMessage");
+
+    const collegeEmail = document.getElementById("collegeEmail");
+    const verifyEmail = document.getElementById("verifyEmail");
+    const backToCode = document.getElementById("backToCode");
+    const emailMessage = document.getElementById("emailMessage");
+
+    const anonymousName = document.getElementById("anonymousName");
+    const enterChat = document.getElementById("enterChat");
+    const backToEmail = document.getElementById("backToEmail");
+    const nameMessage = document.getElementById("nameMessage");
+
+    const chatRoomTitle = document.getElementById("chatRoomTitle");
+    const chatRoomSubtitle = document.getElementById("chatRoomSubtitle");
+    const chatMessages = document.getElementById("chatMessages");
+    const emptyChat = document.getElementById("emptyChat");
+
+    const messageForm = document.getElementById("messageForm");
+    const messageInput = document.getElementById("messageInput");
+
+    const toggleStickers = document.getElementById("toggleStickers");
+    const stickerPanel = document.getElementById("stickerPanel");
+
+    const photoButton = document.getElementById("photoButton");
+    const photoInput = document.getElementById("photoInput");
+
+    const toggleVideo = document.getElementById("toggleVideo");
+    const videoPanel = document.getElementById("videoPanel");
+
+    const showPrivacy = document.getElementById("showPrivacy");
+    const privacyNote = document.getElementById("privacyNote");
+    const leaveClass = document.getElementById("leaveClass");
+
+    let selectedCode = "";
+    let selectedSection = "";
+    let currentEmail = "";
+    let currentAnonymousName = "";
+    let currentRoomKey = "";
+
+    const messagesByRoom = {};
+
+    function showScreen(screen) {
+      classCodeScreen.classList.add("hidden");
+      emailScreen.classList.add("hidden");
+      nameScreen.classList.add("hidden");
+      chatScreen.classList.add("hidden");
+
+      screen.classList.remove("hidden");
+    }
+
+    function setMessage(element, text, isError = true) {
+      element.textContent = text;
+      element.style.color = isError ? "var(--danger)" : "var(--primary)";
+    }
+
+    function clearMessages() {
+      codeMessage.textContent = "";
+      emailMessage.textContent = "";
+      nameMessage.textContent = "";
+    }
+
+    codeOptions.forEach(function (option) {
+      option.addEventListener("click", function () {
+        codeOptions.forEach(function (item) {
+          item.classList.remove("selected");
+        });
+
+        option.classList.add("selected");
+        selectedCode = option.dataset.code;
+        selectedSection = selectedCode.slice(-1).toUpperCase();
+
+        continueCode.disabled = false;
+        setMessage(
+          codeMessage,
+          "Selected Section " + selectedSection,
+          false
+        );
+      });
+    });
+
+    continueCode.addEventListener("click", function () {
+      if (!selectedCode) {
+        setMessage(codeMessage, "Please choose a class section.");
+        return;
+      }
+
+      collegeEmail.value = "";
+      emailMessage.textContent = "";
+      showScreen(emailScreen);
+      collegeEmail.focus();
+    });
+
+    backToCode.addEventListener("click", function () {
+      showScreen(classCodeScreen);
+    });
+
+    verifyEmail.addEventListener("click", function () {
+      const email = collegeEmail.value.trim().toLowerCase();
+      const emailUsername = email.split("@")[0];
+      const domain = "@kristujayanti.com";
+      const commonPrefix = "26bca";
+
+      if (!email.endsWith(domain)) {
+        setMessage(
+          emailMessage,
+          "Please use your @kristujayanti.com college email."
+        );
+        return;
+      }
+
+      if (!emailUsername.startsWith(commonPrefix)) {
+        setMessage(
+          emailMessage,
+          "Email must begin with 26bca followed by your section letter."
+        );
+        return;
+      }
+
+      const emailSection = emailUsername.charAt(5).toLowerCase();
+      const rollNumber = emailUsername.slice(6);
+
+      if (!/^[a-g]$/.test(emailSection)) {
+        setMessage(
+          emailMessage,
+          "The section letter must be between A and G."
+        );
+        return;
+      }
+
+      if (emailSection !== selectedCode.slice(-1).toLowerCase()) {
+        setMessage(
+          emailMessage,
+          "The email section does not match your selected class code."
+        );
+        return;
+      }
+
+      if (!/^\d+$/.test(rollNumber)) {
+        setMessage(
+          emailMessage,
+          "Your email must end with a numeric roll number."
+        );
+        return;
+      }
+
+      currentEmail = email;
+      anonymousName.value = "";
+      nameMessage.textContent = "";
+      showScreen(nameScreen);
+      anonymousName.focus();
+    });
+
+    backToEmail.addEventListener("click", function () {
+      showScreen(emailScreen);
+    });
+
+    enterChat.addEventListener("click", function () {
+      const enteredName = anonymousName.value.trim();
+
+      if (enteredName.length < 2) {
+        setMessage(
+          nameMessage,
+          "Please enter an anonymous name with at least 2 characters."
+        );
+        return;
+      }
+
+      currentAnonymousName = enteredName.slice(0, 30);
+      currentRoomKey = selectedCode;
+
+      chatRoomTitle.textContent =
+        "Section " + selectedSection + " Chat";
+
+      chatRoomSubtitle.textContent =
+        "Class code: " + selectedCode +
+        " • You are: " + currentAnonymousName;
+
+      showScreen(chatScreen);
+      renderMessages();
+    });
+
+    function getCurrentRoomMessages() {
+      if (!messagesByRoom[currentRoomKey]) {
+        messagesByRoom[currentRoomKey] = [];
+      }
+
+      return messagesByRoom[currentRoomKey];
+    }
+
+    function formatTime(date) {
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function renderMessages() {
+      chatMessages.innerHTML = "";
+
+      const messages = getCurrentRoomMessages();
+
+      if (messages.length === 0) {
+        chatMessages.appendChild(emptyChat);
+        emptyChat.classList.remove("hidden");
+        return;
+      }
+
+      messages.forEach(function (message) {
+        const messageElement = document.createElement("article");
+        messageElement.className = "chat-message";
+
+        if (message.author === currentAnonymousName) {
+          messageElement.classList.add("mine");
+        }
+
+        const authorElement = document.createElement("div");
+        authorElement.className = "message-author";
+        authorElement.textContent = message.author;
+
+        const textElement = document.createElement("div");
+        textElement.className = "message-text";
+        textElement.textContent = message.text || "";
+
+        const timeElement = document.createElement("div");
+        timeElement.className = "message-time";
+        timeElement.textContent = message.time;
+
+        messageElement.appendChild(authorElement);
+
+        if (message.image) {
+          const imageElement = document.createElement("img");
+          imageElement.className = "message-image";
+          imageElement.src = message.image;
+          imageElement.alt = "Shared image";
+          messageElement.appendChild(imageElement);
+        }
+
+        if (message.text) {
+          messageElement.appendChild(textElement);
+        }
+
+        messageElement.appendChild(timeElement);
+        chatMessages.appendChild(messageElement);
+      });
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addMessage(text, image = "") {
+      const messages = getCurrentRoomMessages();
+
+      messages.push({
+        author: currentAnonymousName,
+        text: text,
+        image: image,
+        time: formatTime(new Date())
+      });
+
+      renderMessages();
+    }
+
+    messageForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const text = messageInput.value.trim();
+
+      if (!text) {
+        return;
+      }
+
+      addMessage(text);
+      messageInput.value = "";
+      messageInput.focus();
+    });
+
+    messageInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        messageForm.requestSubmit();
+      }
+    });
+
+    toggleStickers.addEventListener("click", function () {
+      stickerPanel.classList.toggle("hidden");
+    });
+
+    document.querySelectorAll(".sticker").forEach(function (sticker) {
+      sticker.addEventListener("click", function () {
+        addMessage(sticker.dataset.sticker);
+        stickerPanel.classList.add("hidden");
+      });
+    });
+
+    photoButton.addEventListener("click", function () {
+      photoInput.click();
+    });
+
+    photoInput.addEventListener("change", function () {
+      const file = photoInput.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please choose an image file.");
+        photoInput.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        addMessage("📷 Shared a photo", event.target.result);
+      };
+
+      reader.readAsDataURL(file);
+      photoInput.value = "";
+    });
+
+    toggleVideo.addEventListener("click", function () {
+      videoPanel.classList.toggle("hidden");
+    });
+
+    showPrivacy.addEventListener("click", function () {
+      privacyNote.classList.toggle("hidden");
+    });
+
+    leaveClass.addEventListener("click", function () {
+      const shouldLeave = confirm(
+        "Are you sure you want to leave this class chat?"
+      );
+
+      if (!shouldLeave) {
+        return;
+      }
+
+      selectedCode = "";
+      selectedSection = "";
+      currentEmail = "";
+      currentAnonymousName = "";
+      currentRoomKey = "";
+
+      codeOptions.forEach(function (option) {
+        option.classList.remove("selected");
+      });
+
+      continueCode.disabled = true;
+      collegeEmail.value = "";
+      anonymousName.value = "";
+      messageInput.value = "";
+
+      stickerPanel.classList.add("hidden");
+      videoPanel.classList.add("hidden");
+      privacyNote.classList.add("hidden");
+
+      showScreen(classCodeScreen);
+      clearMessages();
+    });
+  </script>
+</body>
+</html>
