@@ -1,24 +1,23 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>ClassConnect</title>
 
   <style>
     :root {
-      --bg: #07111f;
-      --panel: rgba(16, 29, 52, 0.92);
-      --panel-light: rgba(255, 255, 255, 0.08);
-      --border: rgba(255, 255, 255, 0.16);
-      --text: #f5f7ff;
-      --muted: #aab6ce;
-      --primary: #8ff5d2;
-      --primary-dark: #102d2a;
-      --danger: #ff8585;
-      --message: #1c3154;
-      --my-message: #14554d;
+      --background: #0b0b0f;
+      --panel: #15151c;
+      --panel-light: #20202a;
+      --border: #30303b;
+      --text: #ffffff;
+      --muted: #a6a6b3;
+      --accent: #8b5cf6;
+      --accent-dark: #6d28d9;
+      --danger: #ef4444;
+      --success: #22c55e;
     }
 
     * {
@@ -26,14 +25,13 @@
     }
 
     body {
-      min-height: 100vh;
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
       background:
-        radial-gradient(circle at top left, #19335b 0, transparent 38%),
-        radial-gradient(circle at bottom right, #173d3b 0, transparent 35%),
-        var(--bg);
+        radial-gradient(circle at top left, #24163d 0%, transparent 35%),
+        var(--background);
+      color: var(--text);
     }
 
     button,
@@ -47,1189 +45,1764 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
     .hidden {
       display: none !important;
     }
 
-    .app {
-      width: min(100%, 900px);
+    .screen {
       min-height: 100vh;
-      margin: 0 auto;
-      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(21, 21, 28, 0.96);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
     }
 
     .brand {
-      margin: 12px 0 22px;
       text-align: center;
+      margin-bottom: 26px;
     }
 
-    .brand h1 {
-      margin: 0;
-      font-size: clamp(2rem, 6vw, 3.4rem);
-      letter-spacing: -1px;
+    .brand-icon {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 14px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      font-size: 30px;
+      font-weight: bold;
     }
 
-    .brand p {
-      margin: 8px 0 0;
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+
+    .subtitle,
+    .small-note {
       color: var(--muted);
-      font-size: 0.95rem;
+      line-height: 1.5;
+      font-size: 14px;
     }
 
-    .screen {
-      width: 100%;
-      padding: clamp(20px, 5vw, 38px);
-      border: 1px solid var(--border);
-      border-radius: 26px;
-      background: var(--panel);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(14px);
+    .field {
+      margin-bottom: 17px;
     }
 
-    .screen h2 {
-      margin: 0 0 10px;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-    }
-
-    .screen-description {
-      margin: 0 0 24px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .field-label {
+    .field label {
       display: block;
-      margin: 15px 0 8px;
-      color: var(--muted);
-      font-size: 0.9rem;
-      font-weight: 700;
+      margin-bottom: 8px;
+      color: #dedee8;
+      font-size: 14px;
+      font-weight: bold;
     }
 
-    input,
-    textarea,
-    select {
+    .field input,
+    .field select,
+    .field textarea {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 13px;
-      padding: 13px 14px;
       outline: none;
+      background: #101017;
       color: var(--text);
-      background: rgba(0, 0, 0, 0.2);
+      padding: 13px 14px;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(143, 245, 210, 0.13);
-    }
-
-    textarea {
-      min-height: 80px;
+    .field textarea {
       resize: vertical;
+      min-height: 44px;
+      max-height: 150px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent);
     }
 
     .button {
       width: 100%;
-      margin-top: 18px;
-      padding: 13px 18px;
       border: 0;
       border-radius: 13px;
-      color: var(--primary-dark);
-      background: var(--primary);
-      font-weight: 800;
-      transition: transform 0.2s ease, filter 0.2s ease;
+      padding: 13px 16px;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      margin-top: 8px;
     }
 
     .button:hover {
-      filter: brightness(1.08);
-      transform: translateY(-1px);
+      background: var(--accent-dark);
     }
 
     .button.secondary {
-      color: var(--text);
       background: var(--panel-light);
       border: 1px solid var(--border);
     }
 
     .button.danger {
-      color: #fff;
-      background: #a83e50;
-    }
-
-    .button:focus-visible,
-    .icon-button:focus-visible,
-    .prototype-close:focus-visible {
-      outline: 3px solid #ffffff;
-      outline-offset: 3px;
-    }
-
-    .code-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-    }
-
-    .code-option {
-      padding: 17px 10px;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-      text-align: center;
-      transition: 0.2s ease;
-    }
-
-    .code-option:hover,
-    .code-option.selected {
-      border-color: var(--primary);
-      background: rgba(143, 245, 210, 0.15);
-      transform: translateY(-2px);
-    }
-
-    .code-option strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 1.05rem;
-    }
-
-    .code-option span {
-      color: var(--muted);
-      font-size: 0.8rem;
+      background: #7f1d1d;
     }
 
     .message {
-      min-height: 20px;
-      margin-top: 12px;
-      color: var(--danger);
-      font-size: 0.9rem;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 14px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      background: var(--panel-light);
+      color: var(--muted);
+    }
+
+    .message.error {
+      color: #fecaca;
+      background: rgba(127, 29, 29, 0.5);
+      border: 1px solid #991b1b;
+    }
+
+    .message.success {
+      color: #bbf7d0;
+      background: rgba(20, 83, 45, 0.5);
+      border: 1px solid #166534;
+    }
+
+    .prototype-box {
+      background: #29203e;
+      border: 1px solid #5b3b86;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 20px;
+      color: #e9d5ff;
+      font-size: 13px;
       line-height: 1.5;
     }
 
-    .chat-layout {
+    .auth-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .auth-actions .button {
+      margin-top: 0;
+    }
+
+    .app {
+      min-height: 100vh;
       display: flex;
-      min-height: 80vh;
-      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .chat-shell {
+      width: 100%;
+      max-width: 1250px;
+      min-height: calc(100vh - 40px);
+      display: grid;
+      grid-template-columns: 300px 1fr;
       overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 24px;
-      background: rgba(8, 18, 35, 0.92);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+      background: rgba(21, 21, 28, 0.97);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
     }
 
-    .chat-header {
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: #111118;
+      padding: 20px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 17px 20px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .chat-title {
+      flex-direction: column;
       min-width: 0;
     }
 
-    .chat-title h2 {
-      margin: 0;
-      font-size: 1.1rem;
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
     }
 
-    .chat-title p {
-      margin: 5px 0 0;
+    .sidebar-brand {
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .user-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 13px;
+      margin-bottom: 20px;
+    }
+
+    .user-name {
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .user-status {
       color: var(--muted);
-      font-size: 0.8rem;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .section-title {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 5px 0 12px;
+    }
+
+    .class-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .class-button {
+      width: 100%;
+      text-align: left;
+      padding: 13px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      color: white;
+      background: transparent;
+    }
+
+    .class-button:hover,
+    .class-button.active {
+      background: #2a203d;
+      border-color: #65459b;
+    }
+
+    .class-button strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .class-button span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding-top: 20px;
+    }
+
+    .conversation {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.13), transparent 35%),
+        #0e0e14;
+    }
+
+    .conversation-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(21, 21, 28, 0.9);
+    }
+
+    .conversation-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      color: white;
+      font-weight: bold;
+    }
+
+    .conversation-title h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .conversation-title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
     }
 
     .header-actions {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 7px;
+      gap: 8px;
     }
 
     .icon-button {
       border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 9px 11px;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.07);
+      background: var(--panel-light);
+      color: white;
+      border-radius: 12px;
+      padding: 10px 12px;
     }
 
-    .icon-button:hover {
-      background: rgba(255, 255, 255, 0.14);
-    }
-
-    .chat-messages {
-      display: flex;
+    .messages {
       flex: 1;
       min-height: 300px;
-      max-height: 58vh;
+      padding: 22px;
+      overflow-y: auto;
+      display: flex;
       flex-direction: column;
       gap: 12px;
-      overflow-y: auto;
-      padding: 18px;
     }
 
     .empty-chat {
       margin: auto;
-      color: var(--muted);
       text-align: center;
-      line-height: 1.6;
+      max-width: 300px;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
-    .chat-message {
-      align-self: flex-start;
-      max-width: min(82%, 560px);
-      padding: 11px 13px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px 16px 16px 4px;
-      background: var(--message);
+    .message-row {
+      display: flex;
+      gap: 9px;
+      align-items: flex-end;
+      max-width: 80%;
+    }
+
+    .message-row.mine {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .mini-avatar {
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #343442;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .bubble {
+      border-radius: 18px;
+      padding: 11px 14px;
+      background: #24242f;
+      border: 1px solid #353544;
       overflow-wrap: anywhere;
     }
 
-    .chat-message.mine {
-      align-self: flex-end;
-      border-radius: 16px 16px 4px 16px;
-      background: var(--my-message);
+    .mine .bubble {
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+      border-color: transparent;
     }
 
     .message-author {
+      color: #d8b4fe;
+      font-size: 11px;
       margin-bottom: 5px;
-      color: var(--primary);
-      font-size: 0.78rem;
-      font-weight: 800;
+      font-weight: bold;
+    }
+
+    .mine .message-author {
+      color: #ede9fe;
     }
 
     .message-text {
       white-space: pre-wrap;
-      line-height: 1.5;
+      line-height: 1.45;
+      font-size: 14px;
     }
 
     .message-time {
-      margin-top: 7px;
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 0.7rem;
-      text-align: right;
+      color: #bdbdc9;
+      font-size: 10px;
+      margin-top: 6px;
     }
 
-    .message-image {
+    .shared-image {
       display: block;
+      max-width: 260px;
       width: 100%;
-      max-width: 280px;
+      border-radius: 12px;
       margin-top: 8px;
-      border-radius: 12px;
     }
 
-    .chat-tools {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 12px 16px 0;
+    .composer {
+      border-top: 1px solid var(--border);
+      padding: 15px;
+      background: #15151c;
     }
 
-    .tool-button {
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 9px 12px;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.07);
-    }
-
-    .tool-button:hover {
-      background: rgba(255, 255, 255, 0.14);
-    }
-
-    .sticker-panel,
-    .video-panel {
-      margin: 12px 16px 0;
-      padding: 13px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .sticker-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .sticker {
-      min-width: 44px;
-      min-height: 44px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 1.6rem;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .video-panel p {
-      margin: 0 0 10px;
+    .selected-file {
       color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.5;
+      font-size: 12px;
+      margin-bottom: 8px;
+      overflow-wrap: anywhere;
     }
 
-    .video-placeholder {
-      display: grid;
-      min-height: 150px;
-      place-items: center;
-      border-radius: 13px;
-      color: var(--muted);
-      background: rgba(0, 0, 0, 0.25);
-      text-align: center;
-    }
-
-    .chat-input-area {
+    .composer-row {
       display: flex;
       align-items: flex-end;
       gap: 9px;
-      padding: 14px 16px 16px;
-      border-top: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.04);
     }
 
-    .chat-input-area textarea {
-      min-height: 48px;
-      max-height: 140px;
-      resize: vertical;
+    .composer-row textarea {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #0d0d13;
+      color: white;
+      padding: 12px;
+      resize: none;
+      outline: none;
+    }
+
+    .composer-row textarea:focus {
+      border-color: var(--accent);
     }
 
     .send-button {
-      flex: 0 0 auto;
-      min-height: 48px;
-      padding: 0 17px;
       border: 0;
-      border-radius: 13px;
-      color: var(--primary-dark);
-      background: var(--primary);
-      font-weight: 800;
+      border-radius: 15px;
+      padding: 12px 16px;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
     }
 
-    .privacy-note {
-      padding: 12px 17px;
-      color: var(--muted);
-      background: rgba(255, 193, 7, 0.08);
-      border-top: 1px solid rgba(255, 193, 7, 0.15);
-      font-size: 0.78rem;
-      line-height: 1.5;
-    }
-
-    .prototype-notice {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(5, 10, 25, 0.76);
-      backdrop-filter: blur(8px);
-    }
-
-    .prototype-notice-card {
-      position: relative;
-      width: min(420px, 100%);
-      padding: 28px 24px 24px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 22px;
-      color: #ffffff;
-      text-align: center;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(36, 48, 92, 0.98),
-          rgba(15, 23, 52, 0.98)
-        );
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
-      animation: prototypePopupIn 0.3s ease-out;
-    }
-
-    .prototype-icon {
-      display: grid;
-      width: 58px;
-      height: 58px;
-      margin: 0 auto 15px;
-      place-items: center;
-      border-radius: 18px;
-      font-size: 28px;
-      background: rgba(255, 255, 255, 0.13);
-    }
-
-    .prototype-notice-card h2 {
-      margin: 0 0 15px;
-      font-size: 1.35rem;
-      line-height: 1.3;
-    }
-
-    .prototype-notice-card p {
-      margin: 10px 0;
-      color: rgba(255, 255, 255, 0.86);
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .prototype-notice-card strong {
-      color: #ffffff;
-    }
-
-    .prototype-thanks {
-      margin-top: 16px !important;
-      font-weight: 600;
-    }
-
-    .prototype-close {
-      position: absolute;
-      top: 10px;
-      right: 13px;
-      width: 32px;
-      height: 32px;
-      border: 0;
-      border-radius: 50%;
-      color: rgba(255, 255, 255, 0.8);
-      background: transparent;
-      font-size: 25px;
+    .file-button {
+      border: 1px solid var(--border);
+      background: var(--panel-light);
+      color: white;
+      border-radius: 15px;
+      padding: 12px 13px;
       cursor: pointer;
     }
 
-    .prototype-close:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.13);
+    .mobile-section {
+      display: none;
     }
 
-    .prototype-continue {
-      width: 100%;
-      margin-top: 16px;
-      padding: 13px 18px;
-      border: 0;
-      border-radius: 13px;
-      color: #10152d;
-      background: #8ff5d2;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .prototype-continue:hover {
-      background: #b1ffe4;
-    }
-
-    @keyframes prototypePopupIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px) scale(0.97);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @media (max-width: 600px) {
+    @media (max-width: 800px) {
       .app {
-        padding: 10px;
+        padding: 0;
       }
 
-      .screen {
-        padding: 22px 17px;
-        border-radius: 20px;
+      .chat-shell {
+        min-height: 100vh;
+        border-radius: 0;
+        grid-template-columns: 1fr;
       }
 
-      .chat-header {
-        align-items: flex-start;
-        flex-direction: column;
+      .sidebar {
+        display: none;
       }
 
-      .header-actions {
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .chat-messages {
-        max-height: 55vh;
+      .mobile-section {
+        display: block;
         padding: 12px;
+        border-bottom: 1px solid var(--border);
+        background: #111118;
       }
 
-      .chat-message {
+      .mobile-section select {
+        width: 100%;
+        background: #20202a;
+        color: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 11px;
+      }
+
+      .conversation-header {
+        padding: 14px;
+      }
+
+      .messages {
+        padding: 15px;
+      }
+
+      .message-row {
         max-width: 92%;
       }
 
-      .chat-input-area {
-        align-items: stretch;
-        flex-direction: column;
+      .composer {
+        padding: 10px;
       }
 
-      .send-button {
-        min-height: 44px;
+      .composer-row {
+        flex-wrap: wrap;
+      }
+
+      .composer-row textarea {
+        flex-basis: 100%;
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .prototype-notice-card {
-        animation: none;
+    @media (max-width: 480px) {
+      .screen {
+        padding: 12px;
       }
 
-      .button,
-      .code-option {
-        transition: none;
+      .auth-card {
+        padding: 22px;
+        border-radius: 18px;
+      }
+
+      .auth-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions .icon-button {
+        font-size: 12px;
+        padding: 8px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- Prototype Notice -->
-  <div
-    id="prototypeNotice"
-    class="prototype-notice"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="prototypeNoticeTitle"
-  >
-    <div class="prototype-notice-card">
-      <button
-        class="prototype-close"
-        id="closePrototypeNotice"
-        type="button"
-        aria-label="Close prototype notice"
-      >
-        &times;
-      </button>
+  <!-- Prototype notice -->
+  <div id="prototypeScreen" class="screen">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon">CC</div>
+        <h1>ClassConnect</h1>
+        <p class="subtitle">A simple class communication platform.</p>
+      </div>
 
-      <div class="prototype-icon">💬</div>
+      <div class="prototype-box">
+        <strong>Prototype Notice</strong><br />
+        This is a prototype created by Dheeru Yadav, a student of BCAC.
+        It is built for easy communication with low internet connectivity
+        and low data usage.
+      </div>
 
-      <h2 id="prototypeNoticeTitle">Welcome to ClassConnect!</h2>
-
-      <p>
-        This is a prototype created by
-        <strong>Dheeru Yadav</strong>, a student of
-        <strong>BCAC</strong>.
-      </p>
-
-      <p>
-        I built it to make communication easier for students,
-        especially in areas with
-        <strong>low internet connectivity</strong>.
-        ClassConnect is designed to work while using
-        <strong>low data</strong>.
-      </p>
-
-      <p class="prototype-thanks">
-        Thank you for trying it!
-      </p>
-
-      <button
-        id="continuePrototype"
-        class="prototype-continue"
-        type="button"
-      >
-        Continue to ClassConnect
+      <button id="startButton" class="button">
+        Continue
       </button>
     </div>
   </div>
 
-  <main class="app">
-    <header class="brand">
-      <h1>ClassConnect</h1>
-      <p>Simple communication for your class</p>
-    </header>
-
-    <!-- Class Code Screen -->
-    <section id="classCodeScreen" class="screen">
-      <h2>Choose your class section</h2>
-
-      <p class="screen-description">
-        Select the class code assigned to your section before continuing.
-      </p>
-
-      <div id="codeGrid" class="code-grid">
-        <button class="code-option" type="button" data-code="26bcaca">
-          <strong>Section A</strong>
-          <span>26bcaca</span>
-        </button>
-
-        <button class="code-option" type="button" data-code="26bcacb">
-          <strong>Section B</strong>
-          <span>26bcacb</span>
-        </button>
-
-        <button class="code-option" type="button" data-code="26bcacc">
-          <strong>Section C</strong>
-          <span>26bcacc</span>
-        </button>
-
-        <button class="code-option" type="button" data-code="26bcacd">
-          <strong>Section D</strong>
-          <span>26bcacd</span>
-        </button>
-
-        <button class="code-option" type="button" data-code="26bcace">
-          <strong>Section E</strong>
-          <span>26bcace</span>
-        </button>
-
-        <button class="code-option" type="button" data-code="26bcacf">
-          <strong>Section F</strong>
-          <span>26bcacf</span>
-        </button>
-
-        <button class="code-option" type="button" data-code="26bcacg">
-          <strong>Section G</strong>
-          <span>26bcacg</span>
-        </button>
+  <!-- Section selection -->
+  <div id="sectionScreen" class="screen hidden">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon">CC</div>
+        <h1>Select your class</h1>
+        <p class="subtitle">
+          Choose the section code assigned to your class.
+        </p>
       </div>
 
-      <button id="continueCode" class="button" type="button" disabled>
+      <div class="field">
+        <label for="sectionSelect">Class section</label>
+        <select id="sectionSelect">
+          <option value="">Select a section</option>
+          <option value="26bcaca">Section A — 26bcaca</option>
+          <option value="26bcacb">Section B — 26bcacb</option>
+          <option value="26bcacc">Section C — 26bcacc</option>
+          <option value="26bcacd">Section D — 26bcacd</option>
+          <option value="26bcace">Section E — 26bcace</option>
+          <option value="26bcacf">Section F — 26bcacf</option>
+          <option value="26bcacg">Section G — 26bcacg</option>
+        </select>
+      </div>
+
+      <button id="continueSectionButton" class="button">
         Continue
       </button>
 
-      <div id="codeMessage" class="message" aria-live="polite"></div>
-    </section>
+      <div id="sectionMessage" class="message hidden"></div>
+    </div>
+  </div>
 
-    <!-- Email Screen -->
-    <section id="emailScreen" class="screen hidden">
-      <h2>Verify your college email</h2>
-
-      <p class="screen-description">
-        Enter your Kristu Jayanti college email. Your email will not be
-        displayed in the chatroom.
-      </p>
-
-      <label class="field-label" for="collegeEmail">
-        College email
-      </label>
-
-      <input
-        id="collegeEmail"
-        type="email"
-        placeholder="26bcaa23@kristujayanti.com"
-        autocomplete="email"
-      />
-
-      <button id="verifyEmail" class="button" type="button">
-        Verify Email
-      </button>
-
-      <button id="backToCode" class="button secondary" type="button">
-        Back
-      </button>
-
-      <div id="emailMessage" class="message" aria-live="polite"></div>
-    </section>
-
-    <!-- Anonymous Name Screen -->
-    <section id="nameScreen" class="screen hidden">
-      <h2>Choose your anonymous name</h2>
-
-      <p class="screen-description">
-        Choose the name that other classmates will see in the chat.
-        Your college email will remain hidden.
-      </p>
-
-      <label class="field-label" for="anonymousName">
-        Anonymous name
-      </label>
-
-      <input
-        id="anonymousName"
-        type="text"
-        maxlength="30"
-        placeholder="For example: Blue Falcon"
-      />
-
-      <button id="enterChat" class="button" type="button">
-        Enter ClassConnect
-      </button>
-
-      <button id="backToEmail" class="button secondary" type="button">
-        Back
-      </button>
-
-      <div id="nameMessage" class="message" aria-live="polite"></div>
-    </section>
-
-    <!-- Chat Screen -->
-    <section id="chatScreen" class="chat-layout hidden">
-      <header class="chat-header">
-        <div class="chat-title">
-          <h2 id="chatRoomTitle">ClassConnect</h2>
-          <p id="chatRoomSubtitle">Your class chatroom</p>
-        </div>
-
-        <div class="header-actions">
-          <button id="showPrivacy" class="icon-button" type="button">
-            Privacy
-          </button>
-
-          <button id="leaveClass" class="icon-button" type="button">
-            Leave
-          </button>
-        </div>
-      </header>
-
-      <div id="chatMessages" class="chat-messages" aria-live="polite">
-        <div id="emptyChat" class="empty-chat">
-          No messages yet.<br />
-          Start the conversation with your classmates.
-        </div>
+  <!-- Login and registration -->
+  <div id="authScreen" class="screen hidden">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon">CC</div>
+        <h1>Verify your email</h1>
+        <p id="selectedSectionText" class="subtitle"></p>
       </div>
 
-      <div class="chat-tools">
-        <button id="toggleStickers" class="tool-button" type="button">
-          Stickers
-        </button>
+      <div class="prototype-box">
+        Your email must follow this format:
+        <br /><br />
+        <strong>26bca + section letter + roll number + @kristujayanti.com</strong>
+        <br /><br />
+        Example for Section A:
+        <br />
+        <strong>26bcaa23@kristujayanti.com</strong>
+      </div>
 
-        <button id="photoButton" class="tool-button" type="button">
-          Photo
-        </button>
-
-        <button id="toggleVideo" class="tool-button" type="button">
-          Video call demo
-        </button>
-
+      <div class="field">
+        <label for="emailInput">College email</label>
         <input
-          id="photoInput"
-          type="file"
-          accept="image/*"
-          class="hidden"
+          id="emailInput"
+          type="email"
+          placeholder="your-college-email@kristujayanti.com"
+          autocomplete="email"
         />
       </div>
 
-      <div id="stickerPanel" class="sticker-panel hidden">
-        <div class="sticker-list">
-          <button class="sticker" type="button" data-sticker="😀">😀</button>
-          <button class="sticker" type="button" data-sticker="😂">😂</button>
-          <button class="sticker" type="button" data-sticker="❤️">❤️</button>
-          <button class="sticker" type="button" data-sticker="🔥">🔥</button>
-          <button class="sticker" type="button" data-sticker="👍">👍</button>
-          <button class="sticker" type="button" data-sticker="👏">👏</button>
-          <button class="sticker" type="button" data-sticker="🎉">🎉</button>
-          <button class="sticker" type="button" data-sticker="😎">😎</button>
-          <button class="sticker" type="button" data-sticker="🤝">🤝</button>
-          <button class="sticker" type="button" data-sticker="📚">📚</button>
-        </div>
-      </div>
-
-      <div id="videoPanel" class="video-panel hidden">
-        <p>
-          This is only a visual video-call demo. A real video call requires
-          WebRTC and a backend signaling service.
+      <div class="field">
+        <label for="passwordInput">ClassConnect password</label>
+        <input
+          id="passwordInput"
+          type="password"
+          minlength="8"
+          placeholder="Create or enter a ClassConnect password"
+          autocomplete="current-password"
+        />
+        <p class="small-note">
+          Use a new password for ClassConnect. Do not enter your actual
+          college email password.
         </p>
-
-        <div class="video-placeholder">
-          🎥<br />
-          Video call preview unavailable in offline demo mode
-        </div>
       </div>
 
-      <form id="messageForm" class="chat-input-area">
-        <textarea
-          id="messageInput"
-          placeholder="Write a message..."
-          maxlength="2000"
-          aria-label="Write a message"
-        ></textarea>
-
-        <button class="send-button" type="submit">
-          Send
+      <div class="auth-actions">
+        <button id="createAccountButton" class="button">
+          Create account
         </button>
-      </form>
 
-      <div id="privacyNote" class="privacy-note hidden">
-        Privacy notice: this prototype hides your college email from the
-        visible chat. In this browser-only demo, messages and photos are
-        stored only in this browser. A real shared chat requires a secure
-        backend and authentication.
+        <button id="loginButton" class="button secondary">
+          Login
+        </button>
       </div>
-    </section>
-  </main>
 
-  <script>
-    const prototypeNotice = document.getElementById("prototypeNotice");
-    const closePrototypeNotice = document.getElementById("closePrototypeNotice");
-    const continuePrototype = document.getElementById("continuePrototype");
+      <button id="resendVerificationButton" class="button secondary hidden">
+        Resend verification email
+      </button>
 
-    function hidePrototypeNotice() {
-      prototypeNotice.classList.add("hidden");
-    }
+      <button id="checkVerificationButton" class="button secondary hidden">
+        I verified my email — check again
+      </button>
 
-    closePrototypeNotice.addEventListener("click", hidePrototypeNotice);
-    continuePrototype.addEventListener("click", hidePrototypeNotice);
+      <button id="backToSectionButton" class="button secondary">
+        Back
+      </button>
 
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        hidePrototypeNotice();
-      }
-    });
+      <div id="authMessage" class="message hidden"></div>
+    </div>
+  </div>
 
-    const classCodeScreen = document.getElementById("classCodeScreen");
-    const emailScreen = document.getElementById("emailScreen");
+  <!-- Anonymous display name -->
+  <div id="nameScreen" class="screen hidden">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="brand-icon">CC</div>
+        <h1>Choose your name</h1>
+        <p class="subtitle">
+          This name will appear in the chat. Your email address will remain hidden.
+        </p>
+      </div>
+
+      <div class="field">
+        <label for="displayNameInput">Anonymous display name</label>
+        <input
+          id="displayNameInput"
+          type="text"
+          maxlength="30"
+          placeholder="Enter your display name"
+        />
+      </div>
+
+      <button id="enterChatButton" class="button">
+        Enter ClassConnect
+      </button>
+
+      <div id="nameMessage" class="message hidden"></div>
+    </div>
+  </div>
+
+  <!-- Main application -->
+  <div id="appScreen" class="app hidden">
+    <div class="chat-shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-brand">ClassConnect</div>
+        </div>
+
+        <div class="user-card">
+          <div id="sidebarUserName" class="user-name">Anonymous</div>
+          <div id="sidebarSection" class="user-status">Section A</div>
+          <div class="user-status">Email hidden</div>
+        </div>
+
+        <div class="section-title">Your classes</div>
+
+        <div id="classList" class="class-list">
+          <button class="class-button active" data-section="26bcaca">
+            <strong>Section A</strong>
+            <span>26bcaca</span>
+          </button>
+
+          <button class="class-button" data-section="26bcacb">
+            <strong>Section B</strong>
+            <span>26bcacb</span>
+          </button>
+
+          <button class="class-button" data-section="26bcacc">
+            <strong>Section C</strong>
+            <span>26bcacc</span>
+          </button>
+
+          <button class="class-button" data-section="26bcacd">
+            <strong>Section D</strong>
+            <span>26bcacd</span>
+          </button>
+
+          <button class="class-button" data-section="26bcace">
+            <strong>Section E</strong>
+            <span>26bcace</span>
+          </button>
+
+          <button class="class-button" data-section="26bcacf">
+            <strong>Section F</strong>
+            <span>26bcacf</span>
+          </button>
+
+          <button class="class-button" data-section="26bcacg">
+            <strong>Section G</strong>
+            <span>26bcacg</span>
+          </button>
+        </div>
+
+        <div class="sidebar-bottom">
+          <button id="logoutButton" class="button danger">
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      <main class="conversation">
+        <div class="mobile-section">
+          <select id="mobileSectionSelect">
+            <option value="26bcaca">Section A</option>
+            <option value="26bcacb">Section B</option>
+            <option value="26bcacc">Section C</option>
+            <option value="26bcacd">Section D</option>
+            <option value="26bcace">Section E</option>
+            <option value="26bcacf">Section F</option>
+            <option value="26bcacg">Section G</option>
+          </select>
+        </div>
+
+        <header class="conversation-header">
+          <div class="conversation-title">
+            <div id="conversationAvatar" class="avatar">A</div>
+            <div>
+              <h2 id="conversationName">Section A</h2>
+              <p id="conversationCode">26bcaca</p>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <button id="clearLocalNoticeButton" class="icon-button">
+              Info
+            </button>
+          </div>
+        </header>
+
+        <section id="messagesContainer" class="messages">
+          <div class="empty-chat">
+            Loading messages...
+          </div>
+        </section>
+
+        <section class="composer">
+          <div id="selectedFileText" class="selected-file"></div>
+
+          <div class="composer-row">
+            <label class="file-button" for="imageInput" title="Attach an image">
+              📷
+            </label>
+
+            <input
+              id="imageInput"
+              type="file"
+              accept="image/*"
+              class="hidden"
+            />
+
+            <textarea
+              id="messageInput"
+              rows="1"
+              maxlength="2000"
+              placeholder="Write a message..."
+            ></textarea>
+
+            <button id="sendButton" class="send-button">
+              Send
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Firebase and application code -->
+  <script type="module">
+    /*
+      ============================================================
+      STEP 1:
+      Replace the values below with your Firebase web configuration.
+      ============================================================
+    */
+
+    const firebaseConfig = {
+
+  apiKey: "AIzaSyCRuWk88uDevVUd5K7PIiq_fx4BAUDQ5uo",
+
+  authDomain: "classconnect-3c0ae.firebaseapp.com",
+
+  projectId: "classconnect-3c0ae",
+
+  storageBucket: "classconnect-3c0ae.firebasestorage.app",
+
+  messagingSenderId: "704203438887",
+
+  appId: "1:704203438887:web:ce0cd4ab620c6e51ba8702",
+
+  measurementId: "G-SGM1ENF588"
+
+};
+
+
+    /*
+      ============================================================
+      Firebase imports
+      ============================================================
+    */
+
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendEmailVerification,
+      reload,
+      signOut,
+      onAuthStateChanged,
+      updateProfile
+    } from
+      "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      orderBy,
+      onSnapshot,
+      serverTimestamp,
+      limit
+    } from
+      "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL
+    } from
+      "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
+
+    /*
+      ============================================================
+      Firebase initialization
+      ============================================================
+    */
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    /*
+      ============================================================
+      Application state
+      ============================================================
+    */
+
+    let selectedSectionCode = "";
+    let currentDisplayName = "";
+    let unsubscribeMessages = null;
+    let selectedImageFile = null;
+
+    const sectionNames = {
+      "26bcaca": "Section A",
+      "26bcacb": "Section B",
+      "26bcacc": "Section C",
+      "26bcacd": "Section D",
+      "26bcace": "Section E",
+      "26bcacf": "Section F",
+      "26bcacg": "Section G"
+    };
+
+    /*
+      ============================================================
+      DOM references
+      ============================================================
+    */
+
+    const prototypeScreen = document.getElementById("prototypeScreen");
+    const sectionScreen = document.getElementById("sectionScreen");
+    const authScreen = document.getElementById("authScreen");
     const nameScreen = document.getElementById("nameScreen");
-    const chatScreen = document.getElementById("chatScreen");
+    const appScreen = document.getElementById("appScreen");
 
-    const codeOptions = document.querySelectorAll(".code-option");
-    const continueCode = document.getElementById("continueCode");
-    const codeMessage = document.getElementById("codeMessage");
+    const startButton = document.getElementById("startButton");
+    const sectionSelect = document.getElementById("sectionSelect");
+    const continueSectionButton = document.getElementById("continueSectionButton");
+    const sectionMessage = document.getElementById("sectionMessage");
 
-    const collegeEmail = document.getElementById("collegeEmail");
-    const verifyEmail = document.getElementById("verifyEmail");
-    const backToCode = document.getElementById("backToCode");
-    const emailMessage = document.getElementById("emailMessage");
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
+    const createAccountButton = document.getElementById("createAccountButton");
+    const loginButton = document.getElementById("loginButton");
+    const resendVerificationButton = document.getElementById("resendVerificationButton");
+    const checkVerificationButton = document.getElementById("checkVerificationButton");
+    const backToSectionButton = document.getElementById("backToSectionButton");
+    const selectedSectionText = document.getElementById("selectedSectionText");
+    const authMessage = document.getElementById("authMessage");
 
-    const anonymousName = document.getElementById("anonymousName");
-    const enterChat = document.getElementById("enterChat");
-    const backToEmail = document.getElementById("backToEmail");
+    const displayNameInput = document.getElementById("displayNameInput");
+    const enterChatButton = document.getElementById("enterChatButton");
     const nameMessage = document.getElementById("nameMessage");
 
-    const chatRoomTitle = document.getElementById("chatRoomTitle");
-    const chatRoomSubtitle = document.getElementById("chatRoomSubtitle");
-    const chatMessages = document.getElementById("chatMessages");
-    const emptyChat = document.getElementById("emptyChat");
+    const sidebarUserName = document.getElementById("sidebarUserName");
+    const sidebarSection = document.getElementById("sidebarSection");
+    const classList = document.getElementById("classList");
+    const logoutButton = document.getElementById("logoutButton");
 
-    const messageForm = document.getElementById("messageForm");
+    const mobileSectionSelect = document.getElementById("mobileSectionSelect");
+    const conversationAvatar = document.getElementById("conversationAvatar");
+    const conversationName = document.getElementById("conversationName");
+    const conversationCode = document.getElementById("conversationCode");
+    const messagesContainer = document.getElementById("messagesContainer");
+
+    const imageInput = document.getElementById("imageInput");
+    const selectedFileText = document.getElementById("selectedFileText");
     const messageInput = document.getElementById("messageInput");
+    const sendButton = document.getElementById("sendButton");
+    const clearLocalNoticeButton = document.getElementById("clearLocalNoticeButton");
 
-    const toggleStickers = document.getElementById("toggleStickers");
-    const stickerPanel = document.getElementById("stickerPanel");
+    /*
+      ============================================================
+      Utility functions
+      ============================================================
+    */
 
-    const photoButton = document.getElementById("photoButton");
-    const photoInput = document.getElementById("photoInput");
-
-    const toggleVideo = document.getElementById("toggleVideo");
-    const videoPanel = document.getElementById("videoPanel");
-
-    const showPrivacy = document.getElementById("showPrivacy");
-    const privacyNote = document.getElementById("privacyNote");
-    const leaveClass = document.getElementById("leaveClass");
-
-    let selectedCode = "";
-    let selectedSection = "";
-    let currentEmail = "";
-    let currentAnonymousName = "";
-    let currentRoomKey = "";
-
-    const messagesByRoom = {};
-
-    function showScreen(screen) {
-      classCodeScreen.classList.add("hidden");
-      emailScreen.classList.add("hidden");
-      nameScreen.classList.add("hidden");
-      chatScreen.classList.add("hidden");
+    function showOnly(screen) {
+      [
+        prototypeScreen,
+        sectionScreen,
+        authScreen,
+        nameScreen,
+        appScreen
+      ].forEach((element) => {
+        element.classList.add("hidden");
+      });
 
       screen.classList.remove("hidden");
     }
 
-    function setMessage(element, text, isError = true) {
+    function showMessage(element, text, type = "") {
       element.textContent = text;
-      element.style.color = isError ? "var(--danger)" : "var(--primary)";
+      element.className = "message";
+
+      if (type) {
+        element.classList.add(type);
+      }
+
+      element.classList.remove("hidden");
     }
 
-    function clearMessages() {
-      codeMessage.textContent = "";
-      emailMessage.textContent = "";
-      nameMessage.textContent = "";
+    function hideMessage(element) {
+      element.classList.add("hidden");
     }
 
-    codeOptions.forEach(function (option) {
-      option.addEventListener("click", function () {
-        codeOptions.forEach(function (item) {
-          item.classList.remove("selected");
-        });
-
-        option.classList.add("selected");
-        selectedCode = option.dataset.code;
-        selectedSection = selectedCode.slice(-1).toUpperCase();
-
-        continueCode.disabled = false;
-        setMessage(
-          codeMessage,
-          "Selected Section " + selectedSection,
-          false
-        );
-      });
-    });
-
-    continueCode.addEventListener("click", function () {
-      if (!selectedCode) {
-        setMessage(codeMessage, "Please choose a class section.");
-        return;
-      }
-
-      collegeEmail.value = "";
-      emailMessage.textContent = "";
-      showScreen(emailScreen);
-      collegeEmail.focus();
-    });
-
-    backToCode.addEventListener("click", function () {
-      showScreen(classCodeScreen);
-    });
-
-    verifyEmail.addEventListener("click", function () {
-      const email = collegeEmail.value.trim().toLowerCase();
-      const emailUsername = email.split("@")[0];
-      const domain = "@kristujayanti.com";
-      const commonPrefix = "26bca";
-
-      if (!email.endsWith(domain)) {
-        setMessage(
-          emailMessage,
-          "Please use your @kristujayanti.com college email."
-        );
-        return;
-      }
-
-      if (!emailUsername.startsWith(commonPrefix)) {
-        setMessage(
-          emailMessage,
-          "Email must begin with 26bca followed by your section letter."
-        );
-        return;
-      }
-
-      const emailSection = emailUsername.charAt(5).toLowerCase();
-      const rollNumber = emailUsername.slice(6);
-
-      if (!/^[a-g]$/.test(emailSection)) {
-        setMessage(
-          emailMessage,
-          "The section letter must be between A and G."
-        );
-        return;
-      }
-
-      if (emailSection !== selectedCode.slice(-1).toLowerCase()) {
-        setMessage(
-          emailMessage,
-          "The email section does not match your selected class code."
-        );
-        return;
-      }
-
-      if (!/^\d+$/.test(rollNumber)) {
-        setMessage(
-          emailMessage,
-          "Your email must end with a numeric roll number."
-        );
-        return;
-      }
-
-      currentEmail = email;
-      anonymousName.value = "";
-      nameMessage.textContent = "";
-      showScreen(nameScreen);
-      anonymousName.focus();
-    });
-
-    backToEmail.addEventListener("click", function () {
-      showScreen(emailScreen);
-    });
-
-    enterChat.addEventListener("click", function () {
-      const enteredName = anonymousName.value.trim();
-
-      if (enteredName.length < 2) {
-        setMessage(
-          nameMessage,
-          "Please enter an anonymous name with at least 2 characters."
-        );
-        return;
-      }
-
-      currentAnonymousName = enteredName.slice(0, 30);
-      currentRoomKey = selectedCode;
-
-      chatRoomTitle.textContent =
-        "Section " + selectedSection + " Chat";
-
-      chatRoomSubtitle.textContent =
-        "Class code: " + selectedCode +
-        " • You are: " + currentAnonymousName;
-
-      showScreen(chatScreen);
-      renderMessages();
-    });
-
-    function getCurrentRoomMessages() {
-      if (!messagesByRoom[currentRoomKey]) {
-        messagesByRoom[currentRoomKey] = [];
-      }
-
-      return messagesByRoom[currentRoomKey];
+    function getSectionName(code) {
+      return sectionNames[code] || "Unknown section";
     }
 
-    function formatTime(date) {
-      return date.toLocaleTimeString([], {
+    function getSectionLetter(code) {
+      return code.slice(-1).toLowerCase();
+    }
+
+    function getInitials(name) {
+      if (!name) return "?";
+
+      return name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join("");
+    }
+
+    function formatMessageTime(timestamp) {
+      if (!timestamp || !timestamp.toDate) {
+        return "";
+      }
+
+      return timestamp.toDate().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit"
       });
     }
 
-    function renderMessages() {
-      chatMessages.innerHTML = "";
+    /*
+      ============================================================
+      Email validation
+      ============================================================
+    */
 
-      const messages = getCurrentRoomMessages();
+    function isValidClassEmail(email, selectedCode) {
+      const normalizedEmail = email.trim().toLowerCase();
+      const username = normalizedEmail.split("@")[0];
+      const domain = "@kristujayanti.com";
 
-      if (messages.length === 0) {
-        chatMessages.appendChild(emptyChat);
-        emptyChat.classList.remove("hidden");
-        return;
+      if (!normalizedEmail.endsWith(domain)) {
+        return false;
       }
 
-      messages.forEach(function (message) {
-        const messageElement = document.createElement("article");
-        messageElement.className = "chat-message";
+      if (!/^26bca[a-g]\d+@kristujayanti\.com$/i.test(normalizedEmail)) {
+        return false;
+      }
 
-        if (message.author === currentAnonymousName) {
-          messageElement.classList.add("mine");
-        }
+      const emailSectionLetter = username.charAt(5).toLowerCase();
+      const selectedSectionLetter = getSectionLetter(selectedCode);
+      const rollNumber = username.slice(6);
 
-        const authorElement = document.createElement("div");
-        authorElement.className = "message-author";
-        authorElement.textContent = message.author;
+      if (emailSectionLetter !== selectedSectionLetter) {
+        return false;
+      }
 
-        const textElement = document.createElement("div");
-        textElement.className = "message-text";
-        textElement.textContent = message.text || "";
+      if (!/^[a-g]$/.test(emailSectionLetter)) {
+        return false;
+      }
 
-        const timeElement = document.createElement("div");
-        timeElement.className = "message-time";
-        timeElement.textContent = message.time;
+      if (!/^\d+$/.test(rollNumber)) {
+        return false;
+      }
 
-        messageElement.appendChild(authorElement);
-
-        if (message.image) {
-          const imageElement = document.createElement("img");
-          imageElement.className = "message-image";
-          imageElement.src = message.image;
-          imageElement.alt = "Shared image";
-          messageElement.appendChild(imageElement);
-        }
-
-        if (message.text) {
-          messageElement.appendChild(textElement);
-        }
-
-        messageElement.appendChild(timeElement);
-        chatMessages.appendChild(messageElement);
-      });
-
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return true;
     }
 
-    function addMessage(text, image = "") {
-      const messages = getCurrentRoomMessages();
+    function validateAuthInputs() {
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
 
-      messages.push({
-        author: currentAnonymousName,
-        text: text,
-        image: image,
-        time: formatTime(new Date())
-      });
+      if (!selectedSectionCode) {
+        showMessage(authMessage, "Please select your section first.", "error");
+        return false;
+      }
 
-      renderMessages();
+      if (!isValidClassEmail(email, selectedSectionCode)) {
+        showMessage(
+          authMessage,
+          "Invalid email. Make sure the section letter in your email matches your selected section.",
+          "error"
+        );
+        return false;
+      }
+
+      if (password.length < 8) {
+        showMessage(
+          authMessage,
+          "Your ClassConnect password must contain at least 8 characters.",
+          "error"
+        );
+        return false;
+      }
+
+      return true;
     }
 
-    messageForm.addEventListener("submit", function (event) {
-      event.preventDefault();
+    /*
+      ============================================================
+      Initial navigation
+      ============================================================
+    */
 
-      const text = messageInput.value.trim();
+    startButton.addEventListener("click", () => {
+      showOnly(sectionScreen);
+    });
 
-      if (!text) {
+    continueSectionButton.addEventListener("click", () => {
+      const code = sectionSelect.value;
+
+      if (!code) {
+        showMessage(sectionMessage, "Please select a section.", "error");
         return;
       }
 
-      addMessage(text);
-      messageInput.value = "";
-      messageInput.focus();
+      selectedSectionCode = code;
+
+      selectedSectionText.textContent =
+        `${getSectionName(code)} selected — ${code}`;
+
+      mobileSectionSelect.value = code;
+
+      hideMessage(sectionMessage);
+      showOnly(authScreen);
     });
 
-    messageInput.addEventListener("keydown", function (event) {
-      if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        messageForm.requestSubmit();
+    backToSectionButton.addEventListener("click", () => {
+      hideMessage(authMessage);
+      showOnly(sectionScreen);
+    });
+
+    /*
+      ============================================================
+      Firebase account creation
+      ============================================================
+    */
+
+    createAccountButton.addEventListener("click", async () => {
+      if (!validateAuthInputs()) return;
+
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      createAccountButton.disabled = true;
+      loginButton.disabled = true;
+
+      try {
+        const credential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        await sendEmailVerification(credential.user);
+
+        showMessage(
+          authMessage,
+          "Account created. A verification email was sent. Open your email, click the verification link, then return here and click the verification button.",
+          "success"
+        );
+
+        resendVerificationButton.classList.remove("hidden");
+        checkVerificationButton.classList.remove("hidden");
+      } catch (error) {
+        console.error(error);
+
+        showMessage(
+          authMessage,
+          getFirebaseErrorMessage(error),
+          "error"
+        );
+      } finally {
+        createAccountButton.disabled = false;
+        loginButton.disabled = false;
       }
     });
 
-    toggleStickers.addEventListener("click", function () {
-      stickerPanel.classList.toggle("hidden");
+    /*
+      ============================================================
+      Firebase login
+      ============================================================
+    */
+
+    loginButton.addEventListener("click", async () => {
+      if (!validateAuthInputs()) return;
+
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      createAccountButton.disabled = true;
+      loginButton.disabled = true;
+
+      try {
+        const credential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        if (!credential.user.emailVerified) {
+          showMessage(
+            authMessage,
+            "Your email is not verified yet. Check your inbox and click the verification link.",
+            "error"
+          );
+
+          resendVerificationButton.classList.remove("hidden");
+          checkVerificationButton.classList.remove("hidden");
+          return;
+        }
+
+        showNameScreen();
+      } catch (error) {
+        console.error(error);
+
+        showMessage(
+          authMessage,
+          getFirebaseErrorMessage(error),
+          "error"
+        );
+      } finally {
+        createAccountButton.disabled = false;
+        loginButton.disabled = false;
+      }
     });
 
-    document.querySelectorAll(".sticker").forEach(function (sticker) {
-      sticker.addEventListener("click", function () {
-        addMessage(sticker.dataset.sticker);
-        stickerPanel.classList.add("hidden");
+    /*
+      ============================================================
+      Verification controls
+      ============================================================
+    */
+
+    resendVerificationButton.addEventListener("click", async () => {
+      const user = auth.currentUser;
+
+      if (!user) {
+        showMessage(authMessage, "Please log in first.", "error");
+        return;
+      }
+
+      try {
+        await sendEmailVerification(user);
+
+        showMessage(
+          authMessage,
+          "A new verification email has been sent.",
+          "success"
+        );
+      } catch (error) {
+        showMessage(
+          authMessage,
+          getFirebaseErrorMessage(error),
+          "error"
+        );
+      }
+    });
+
+    checkVerificationButton.addEventListener("click", async () => {
+      const user = auth.currentUser;
+
+      if (!user) {
+        showMessage(authMessage, "Please log in first.", "error");
+        return;
+      }
+
+      try {
+        await reload(user);
+
+        if (auth.currentUser.emailVerified) {
+          showNameScreen();
+        } else {
+          showMessage(
+            authMessage,
+            "Firebase still shows your email as unverified. Open the verification email and click the link first.",
+            "error"
+          );
+        }
+      } catch (error) {
+        showMessage(
+          authMessage,
+          getFirebaseErrorMessage(error),
+          "error"
+        );
+      }
+    });
+
+    /*
+      ============================================================
+      Anonymous display name
+      ============================================================
+    */
+
+    function showNameScreen() {
+      hideMessage(authMessage);
+      showOnly(nameScreen);
+    }
+
+    enterChatButton.addEventListener("click", async () => {
+      const name = displayNameInput.value.trim();
+
+      if (name.length < 2) {
+        showMessage(
+          nameMessage,
+          "Please enter a display name with at least 2 characters.",
+          "error"
+        );
+        return;
+      }
+
+      if (!auth.currentUser) {
+        showMessage(
+          nameMessage,
+          "Your login session has expired. Please log in again.",
+          "error"
+        );
+        showOnly(authScreen);
+        return;
+      }
+
+      enterChatButton.disabled = true;
+
+      try {
+        await updateProfile(auth.currentUser, {
+          displayName: name
+        });
+
+        currentDisplayName = name;
+        openChatApplication();
+      } catch (error) {
+        showMessage(
+          nameMessage,
+          getFirebaseErrorMessage(error),
+          "error"
+        );
+      } finally {
+        enterChatButton.disabled = false;
+      }
+    });
+
+    /*
+      ============================================================
+      Open the chat application
+      ============================================================
+    */
+
+    function openChatApplication() {
+      sidebarUserName.textContent = currentDisplayName;
+      sidebarSection.textContent =
+        `${getSectionName(selectedSectionCode)} — ${selectedSectionCode}`;
+
+      showOnly(appScreen);
+      selectChatSection(selectedSectionCode);
+    }
+
+    /*
+      ============================================================
+      Section switching
+      ============================================================
+    */
+
+    classList.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-section]");
+
+      if (!button) return;
+
+      const code = button.dataset.section;
+      selectChatSection(code);
+    });
+
+    mobileSectionSelect.addEventListener("change", () => {
+      selectChatSection(mobileSectionSelect.value);
+    });
+
+    function selectChatSection(code) {
+      selectedSectionCode = code;
+
+      document.querySelectorAll(".class-button").forEach((button) => {
+        button.classList.toggle(
+          "active",
+          button.dataset.section === code
+        );
       });
-    });
 
-    photoButton.addEventListener("click", function () {
-      photoInput.click();
-    });
+      mobileSectionSelect.value = code;
+      conversationName.textContent = getSectionName(code);
+      conversationCode.textContent = code;
+      conversationAvatar.textContent = getSectionLetter(code).toUpperCase();
 
-    photoInput.addEventListener("change", function () {
-      const file = photoInput.files[0];
+      subscribeToMessages(code);
+    }
 
-      if (!file) {
-        return;
+    /*
+      ============================================================
+      Firestore real-time messages
+      ============================================================
+    */
+
+    function subscribeToMessages(code) {
+      if (unsubscribeMessages) {
+        unsubscribeMessages();
+        unsubscribeMessages = null;
       }
 
-      if (!file.type.startsWith("image/")) {
-        alert("Please choose an image file.");
-        photoInput.value = "";
-        return;
-      }
+      messagesContainer.innerHTML = `
+        <div class="empty-chat">
+          Loading messages...
+        </div>
+      `;
 
-      const reader = new FileReader();
-
-      reader.onload = function (event) {
-        addMessage("📷 Shared a photo", event.target.result);
-      };
-
-      reader.readAsDataURL(file);
-      photoInput.value = "";
-    });
-
-    toggleVideo.addEventListener("click", function () {
-      videoPanel.classList.toggle("hidden");
-    });
-
-    showPrivacy.addEventListener("click", function () {
-      privacyNote.classList.toggle("hidden");
-    });
-
-    leaveClass.addEventListener("click", function () {
-      const shouldLeave = confirm(
-        "Are you sure you want to leave this class chat?"
+      const messagesReference = collection(
+        db,
+        "rooms",
+        code,
+        "messages"
       );
 
-      if (!shouldLeave) {
+      const messagesQuery = query(
+        messagesReference,
+        orderBy("createdAt", "asc"),
+        limit(100)
+      );
+
+      unsubscribeMessages = onSnapshot(
+        messagesQuery,
+        (snapshot) => {
+          messagesContainer.innerHTML = "";
+
+          if (snapshot.empty) {
+            messagesContainer.innerHTML = `
+              <div class="empty-chat">
+                No messages yet.<br />
+                Be the first person to send a message.
+              </div>
+            `;
+            return;
+          }
+
+          snapshot.forEach((messageDocument) => {
+            const message = messageDocument.data();
+            renderMessage(message);
+          });
+
+          messagesContainer.scrollTop =
+            messagesContainer.scrollHeight;
+        },
+        (error) => {
+          console.error(error);
+
+          messagesContainer.innerHTML = `
+            <div class="empty-chat">
+              Unable to load messages. Check your Firebase Firestore rules.
+            </div>
+          `;
+        }
+      );
+    }
+
+    function renderMessage(message) {
+      const currentUser = auth.currentUser;
+      const isMine =
+        currentUser && message.authorUid === currentUser.uid;
+
+      const row = document.createElement("div");
+      row.className = "message-row";
+
+      if (isMine) {
+        row.classList.add("mine");
+      }
+
+      const miniAvatar = document.createElement("div");
+      miniAvatar.className = "mini-avatar";
+      miniAvatar.textContent = getInitials(message.authorName);
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+
+      const author = document.createElement("div");
+      author.className = "message-author";
+      author.textContent = isMine
+        ? "You"
+        : message.authorName || "Anonymous";
+
+      bubble.appendChild(author);
+
+      if (message.text) {
+        const text = document.createElement("div");
+        text.className = "message-text";
+        text.textContent = message.text;
+        bubble.appendChild(text);
+      }
+
+      if (message.imageUrl) {
+        const image = document.createElement("img");
+        image.className = "shared-image";
+        image.src = message.imageUrl;
+        image.alt = "Shared image";
+        image.loading = "lazy";
+        bubble.appendChild(image);
+      }
+
+      const time = document.createElement("div");
+      time.className = "message-time";
+      time.textContent = formatMessageTime(message.createdAt);
+      bubble.appendChild(time);
+
+      row.appendChild(miniAvatar);
+      row.appendChild(bubble);
+      messagesContainer.appendChild(row);
+    }
+
+    /*
+      ============================================================
+      Image selection
+      ============================================================
+    */
+
+    imageInput.addEventListener("change", () => {
+      selectedImageFile = imageInput.files[0] || null;
+
+      if (!selectedImageFile) {
+        selectedFileText.textContent = "";
         return;
       }
 
-      selectedCode = "";
-      selectedSection = "";
-      currentEmail = "";
-      currentAnonymousName = "";
-      currentRoomKey = "";
+      if (!selectedImageFile.type.startsWith("image/")) {
+        selectedImageFile = null;
+        imageInput.value = "";
 
-      codeOptions.forEach(function (option) {
-        option.classList.remove("selected");
-      });
+        showTemporaryComposerMessage(
+          "Please select an image file."
+        );
+        return;
+      }
 
-      continueCode.disabled = true;
-      collegeEmail.value = "";
-      anonymousName.value = "";
-      messageInput.value = "";
+      if (selectedImageFile.size > 5 * 1024 * 1024) {
+        selectedImageFile = null;
+        imageInput.value = "";
 
-      stickerPanel.classList.add("hidden");
-      videoPanel.classList.add("hidden");
-      privacyNote.classList.add("hidden");
+        showTemporaryComposerMessage(
+          "The image must be smaller than 5 MB."
+        );
+        return;
+      }
 
-      showScreen(classCodeScreen);
-      clearMessages();
+      selectedFileText.textContent =
+        `Selected image: ${selectedImageFile.name}`;
     });
+
+    function showTemporaryComposerMessage(text) {
+      selectedFileText.textContent = text;
+    }
+
+    /*
+      ============================================================
+      Send messages and upload images
+      ============================================================
+    */
+
+    sendButton.addEventListener("click", sendMessage);
+
+    messageInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    async function sendMessage() {
+      const text = messageInput.value.trim();
+
+      if (!text && !selectedImageFile) {
+        return;
+      }
+
+      if (!auth.currentUser) {
+        showTemporaryComposerMessage("Please log in again.");
+        return;
+      }
+
+      sendButton.disabled = true;
+
+      try {
+        let imageUrl = "";
+
+        if (selectedImageFile) {
+          const fileName =
+            `${Date.now()}-${selectedImageFile.name}`;
+
+          const imageReference = ref(
+            storage,
+            `chatImages/${auth.currentUser.uid}/${fileName}`
+          );
+
+          await uploadBytes(imageReference, selectedImageFile);
+          imageUrl = await getDownloadURL(imageReference);
+        }
+
+        await addDoc(
+          collection(
+            db,
+            "rooms",
+            selectedSectionCode,
+            "messages"
+          ),
+          {
+            authorUid: auth.currentUser.uid,
+            authorName: currentDisplayName || "Anonymous",
+            text: text,
+            imageUrl: imageUrl,
+            section: selectedSectionCode,
+            createdAt: serverTimestamp()
+          }
+        );
+
+        messageInput.value = "";
+        imageInput.value = "";
+        selectedImageFile = null;
+        selectedFileText.textContent = "";
+      } catch (error) {
+        console.error(error);
+
+        showTemporaryComposerMessage(
+          getFirebaseErrorMessage(error)
+        );
+      } finally {
+        sendButton.disabled = false;
+      }
+    }
+
+    /*
+      ============================================================
+      Sign out
+      ============================================================
+    */
+
+    logoutButton.addEventListener("click", async () => {
+      try {
+        if (unsubscribeMessages) {
+          unsubscribeMessages();
+          unsubscribeMessages = null;
+        }
+
+        await signOut(auth);
+
+        selectedSectionCode = "";
+        currentDisplayName = "";
+        emailInput.value = "";
+        passwordInput.value = "";
+        displayNameInput.value = "";
+
+        showOnly(prototypeScreen);
+      } catch (error) {
+        console.error(error);
+        alert(getFirebaseErrorMessage(error));
+      }
+    });
+
+    /*
+      ============================================================
+      Information button
+      ============================================================
+    */
+
+    clearLocalNoticeButton.addEventListener("click", () => {
+      alert(
+        "ClassConnect is a prototype created by Dheeru Yadav, a BCAC student. " +
+        "Your email is used for Firebase authentication but is not displayed in chat."
+      );
+    });
+
+    /*
+      ============================================================
+      Firebase authentication state
+      ============================================================
+    */
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        return;
+      }
+
+      try {
+        await reload(user);
+
+        if (auth.currentUser && auth.currentUser.emailVerified) {
+          if (currentDisplayName) {
+            openChatApplication();
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
+
+    /*
+      ============================================================
+      Firebase error messages
+      ============================================================
+    */
+
+    function getFirebaseErrorMessage(error) {
+      const code = error?.code || "";
+
+      const messages = {
+        "auth/email-already-in-use":
+          "This email already has a ClassConnect account. Try logging in.",
+        "auth/invalid-email":
+          "The email address is invalid.",
+        "auth/weak-password":
+          "The password is too weak. Use at least 8 characters.",
+        "auth/invalid-credential":
+          "The email or password is incorrect.",
+        "auth/user-not-found":
+          "No ClassConnect account was found for this email.",
+        "auth/wrong-password":
+          "The password is incorrect.",
+        "auth/too-many-requests":
+          "Too many attempts. Please wait and try again.",
+        "auth/network-request-failed":
+          "Network error. Check your internet connection.",
+        "auth/operation-not-allowed":
+          "Email/password login is not enabled in Firebase Authentication.",
+        "storage/unauthorized":
+          "Firebase Storage rejected this image upload. Check Storage rules.",
+        "storage/unknown":
+          "The image upload failed. Please try again."
+      };
+
+      return messages[code] ||
+        error?.message ||
+        "Something went wrong. Please try again.";
+    }
   </script>
 </body>
 </html>
